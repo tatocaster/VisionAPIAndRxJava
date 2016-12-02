@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         mUnbinder = ButterKnife.bind(this);
 
         Subscription rxPermission = new RxPermissions(this)
-                .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .request(Manifest.permission.READ_EXTERNAL_STORAGE)
                 .subscribe(granted -> {
                     if (!granted)
                         Snackbar.make(findViewById(android.R.id.content), "Please give the permission", Snackbar.LENGTH_SHORT).show();
