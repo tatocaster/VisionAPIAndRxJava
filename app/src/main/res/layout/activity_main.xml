@@ -20,7 +20,7 @@
             android:id="@+id/activity_main_selected_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scaleType="centerCrop"
+            android:scaleType="center"
             tools:layout_height="200dp"
             tools:src="@drawable/dickbutt"/>
 

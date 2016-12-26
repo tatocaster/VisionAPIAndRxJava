@@ -2,6 +2,7 @@ package me.tatocaster.mobilevisionapi;
 
 import android.Manifest;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private Paint mRectanglePaint;
     private Paint mCirclePaint;
     private Canvas mCanvas;
+    private Bitmap mHornBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         mSubscriptions = new CompositeSubscription(rxPermission);
+
+        mHornBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.horn);
     }
 
     private void pickFromGallery() {
@@ -112,11 +116,9 @@ public class MainActivity extends AppCompatActivity {
                             .subscribe(faceSparseArray -> {
                                 mSelectedImageView.setImageBitmap(temporaryBitmap);
                                 enableButton(b);
-                            }, throwable -> {
-                                new AlertDialog.Builder(MainActivity.this)
-                                        .setMessage(throwable.getMessage())
-                                        .show();
-                            });
+                            }, throwable -> new AlertDialog.Builder(MainActivity.this)
+                                    .setMessage(throwable.getMessage())
+                                    .show());
                 });
         mSubscriptions.add(faceRecognitionSub);
     }
@@ -182,12 +184,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void drawLandmarksOnFace(List<Landmark> landmarks) {
+        float hornLevelY = 0;
+        float radius = 10.0f;
         for (Landmark landmark : landmarks) {
-            if (landmark.getType() == 4 || landmark.getType() == 10) { //eyes
+            if (landmark.getType() == Landmark.LEFT_EYE || landmark.getType() == Landmark.RIGHT_EYE) {
                 float x = landmark.getPosition().x;
-                float y = landmark.getPosition().y;
-                float radius = 10.0f;
+                float y = hornLevelY = landmark.getPosition().y;
                 mCanvas.drawCircle(x, y, radius, mCirclePaint);
+            }
+            if (landmark.getType() == Landmark.NOSE_BASE) {
+                mCanvas.drawBitmap(mHornBitmap, landmark.getPosition().x - mHornBitmap.getWidth() / 3,
+                        hornLevelY - mHornBitmap.getHeight() - 100, null);
             }
         }
     }
