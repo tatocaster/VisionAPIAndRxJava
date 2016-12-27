@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap mSourceBitmap;
     private Paint mRectanglePaint;
     private Paint mCirclePaint;
+    private Paint mTextPaint;
     private Canvas mCanvas;
     private Bitmap mHornBitmap;
 
@@ -76,7 +77,8 @@ public class MainActivity extends AppCompatActivity {
 
         mSubscriptions = new CompositeSubscription(rxPermission);
 
-        mHornBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.horn);
+        Bitmap mHornBitmapTemp = BitmapFactory.decodeResource(getResources(), R.drawable.horn);
+        mHornBitmap = Bitmap.createScaledBitmap(mHornBitmapTemp, 256, 256, false);
     }
 
     private void pickFromGallery() {
@@ -129,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
             createRectangle();
             createCircle();
+            createTextPaint();
 
             return Observable.just(temporaryBitmap);
         }).subscribeOn(Schedulers.io());
@@ -170,6 +173,10 @@ public class MainActivity extends AppCompatActivity {
 
             Face face = faceSparseArray.valueAt(i);
 
+            if (face == null) {
+                continue;
+            }
+
             float left = face.getPosition().x;
             float top = face.getPosition().y;
             float right = left + face.getWidth();
@@ -180,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
             mCanvas.drawRoundRect(rectF, cornerRadius, cornerRadius, mRectanglePaint);
 
             drawLandmarksOnFace(face.getLandmarks());
+//            mCanvas.drawText("Smile: " + face.getIsSmilingProbability(), left, bottom + 50, mTextPaint);
         }
     }
 
@@ -205,6 +213,14 @@ public class MainActivity extends AppCompatActivity {
         mRectanglePaint.setColor(Color.MAGENTA);
         mRectanglePaint.setStyle(Paint.Style.STROKE);
     }
+
+    private void createTextPaint() {
+        mTextPaint = new Paint();
+        mTextPaint.setColor(Color.YELLOW);
+        mTextPaint.setTextSize(50);
+        mTextPaint.setStyle(Paint.Style.FILL);
+    }
+
 
     private void createCircle() {
         mCirclePaint = new Paint();

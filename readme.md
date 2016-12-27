@@ -11,4 +11,6 @@ Demo app uses,
 
 `MainActivity` contains all the code.
 
+![Result](https://github.com/tatocaster/VisionAPIAndRxJava/art/art.png "result")
+
 ### No Tests :|
